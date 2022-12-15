@@ -1,65 +1,52 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectInAndOut.Data;
 using ProjectInAndOut.Models;
 
 namespace ProjectInAndOut.Controllers
 {
-    public class ExpenseController : Controller
+    public class ExpenseTypeController : Controller
     {
         private readonly ApplicationDbContext _db;
 
-        public ExpenseController(ApplicationDbContext db)
+        public ExpenseTypeController(ApplicationDbContext db)
         {
             _db = db;
 
         }
         public IActionResult Index()
         {
-            IEnumerable<Expense> objList = _db.Expenses;
-
-            foreach (var obj in objList)
-            {
-                obj.ExpenseType =   _db.ExpenseTypes.FirstOrDefault(u => u.Id == obj.ExpenseTypeId);
-            }
+            IEnumerable<ExpenseType> objList = _db.ExpenseTypes;
             return View(objList);
-            
+
         }
 
         //Get create
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> TypeDropDown = _db.ExpenseTypes.Select(i => new SelectListItem
-            {
-                Text = i.Name,
-                Value = i.Id.ToString(),
-            });
-
-            ViewBag.TypeDropDown = TypeDropDown;
             return View();
         }
 
         //Post Create, which means posting the form data
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Expense obj)
+        public IActionResult Create(ExpenseType obj)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                _db.Expenses.Add(obj);
+                _db.ExpenseTypes.Add(obj);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(obj); 
+            return View(obj);
         }
 
 
-       
+
 
 
         //To get the Delete data and display it in a form
         // the id helps in getting the exact one we want to delete
-       
+
         public IActionResult Delete(int? id)
         {
 
@@ -69,14 +56,14 @@ namespace ProjectInAndOut.Controllers
                 return NotFound();
             }
 
-            var obj = _db.Expenses.Find(id);
+            var obj = _db.ExpenseTypes.Find(id);
 
-            if(obj == null)
+            if (obj == null)
             {
                 return NotFound();
             }
 
-           
+
             return View(obj);
 
 
@@ -89,7 +76,7 @@ namespace ProjectInAndOut.Controllers
         public IActionResult DeletePost(int? id)
         {
 
-            var obj = _db.Expenses.Find(id);
+            var obj = _db.ExpenseTypes.Find(id);
 
             if (obj == null)
             {
@@ -97,7 +84,7 @@ namespace ProjectInAndOut.Controllers
             }
 
 
-            _db.Expenses.Remove(obj);
+            _db.ExpenseTypes.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
 
@@ -110,22 +97,14 @@ namespace ProjectInAndOut.Controllers
 
         public IActionResult Update(int? id)
         {
-            //this to help with the display of the dropdown of the expense type
 
-            IEnumerable<SelectListItem> TypeDropDown = _db.ExpenseTypes.Select(i => new SelectListItem
-            {
-                Text = i.Name,
-                Value = i.Id.ToString(),
-            });
-
-            ViewBag.TypeDropDown = TypeDropDown;
 
             if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            var obj = _db.Expenses.Find(id);
+            var obj = _db.ExpenseTypes.Find(id);
 
             if (obj == null)
             {
@@ -142,11 +121,11 @@ namespace ProjectInAndOut.Controllers
         //Updating our Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(Expense obj)
+        public IActionResult Update(ExpenseType obj)
         {
             if (ModelState.IsValid)
             {
-                _db.Expenses.Update(obj);
+                _db.ExpenseTypes.Update(obj);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
